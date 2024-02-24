@@ -18,17 +18,9 @@ function Success(){
         const canvas = document.getElementById("canvas");
         const video = document.getElementById("video");
         const context = canvas.getContext("2d");
-
-        // Draw the video frame onto the canvas
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Display the canvas
+        context.drawImage(video, 0, 0,canvas.width, canvas.height);
         canvas.style.display = "block";
-
-        // Hide the canvas after 2 seconds (adjust the time as needed)
-        setTimeout(() => {
         canvas.style.display = "none";
-    }, 2000);
     }
 
     function dataURItoBlob(dataURI) {
@@ -77,7 +69,7 @@ function Success(){
     function viewProfile(){
         const nameInput = document.getElementById("name");
         const canvas = document.getElementById("canvas");
-        const video = document.getElementById("video");
+        const video = document.tElementById("video");
         const photo = dataURItoBlob(canvas.toDataURL());
         const context = canvas.getContext("2d");
         context.drawImage(video, 0, 0,canvas.width, canvas.height);
