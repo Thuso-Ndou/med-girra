@@ -4,9 +4,7 @@ import Success from './Success';
 function App() {
   return (
     <div className="App">
-      <Success >
-        
-      </Success>
+      <Success />
     </div>
   );
 }
