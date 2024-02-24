@@ -15,7 +15,7 @@ def index():
    return render_template('index.html') 
 
 # post method
-@app.route("/register", method=["POST"])
+@app.route("/register", methods=["POST"])
 def register():
     name = request.form.get('name')
     #photo uploads
@@ -25,7 +25,7 @@ def register():
     db = os.path.join(os.getcwd(), "static", "uploads")
     
     if not os.path.exists(db):
-        os.makedev(db)
+        os.makedirs(db)
     
     #save the image with the file name
     photo.save(os.path.join(db, f'{datetime.date.today()}{name}.jpg'))
@@ -39,7 +39,7 @@ def register():
     #login route post
     @app.route("/login", methods=["POST"])
     def login():
-        photo = requet.files["photo"]
+        photo = request.files["photo"]
         
         # save photo to db
         db = os.path.join(os.getcwd(),"static", "uploads")
@@ -53,7 +53,7 @@ def register():
         photo.save(login_fileName)
         
         # camera activation
-        login_image = cv2.imread(login_file)
+        login_image = cv2.imread(login_fileName)
         gray_image = cv2.cvtColor(login_image, cv2.COLOR_BGR2GRAY)
         
         #load haar Cascade file
@@ -65,7 +65,7 @@ def register():
             response = {"success": False}
             return jsonify(response)
         
-        login_image = face_recognition.load_image_file()
+        login_image = face_recognition.load_image_file(login_fileName)
         
         # when face is available on database
         login_face_encodings = face_recognition.face_encodings(login_image)
@@ -78,11 +78,10 @@ def register():
            registered_face_encoding = face_recognition.face_encodings(registered_image)
            
            # compare both images
-           if len(registered_face_encoding) >0 and len(login_face_encodings) > 0:
-               matches = face_recognition.compare_faces(registered_face_encoding, login_face_encoding[0])
-               print("The Match", matches)
-               if any(matches):
-                    response = {"Succes":True, "name":name}
+           for login_face_encoding in login_face_encodings:
+                matches = face_recognition.compare_faces(registered_face_encoding, login_face_encoding)
+                if any(matches):
+                    response = {"success": True, "name": name}
                     return jsonify(response) 
     # no match 
     response = {"Succes":False}
@@ -93,6 +92,3 @@ def register():
 def success():
     user_name = request.args.get("user_name")
     return render_template("success.html", user_name=user_name)
-
-if __name__ == "__main__":
-    app.run(debug=True)
